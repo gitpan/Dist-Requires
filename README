@@ -2,7 +2,7 @@ NAME
     Dist::Requires - Identify requirements for a distribution
 
 VERSION
-    version 0.001
+    version 0.002
 
 SYNOPSIS
       use Dist::Requires;
@@ -15,12 +15,13 @@ SYNOPSIS
       my $requires = $dr->requires(dist => 'Foo-Bar-1.2');
 
 DESCRIPTION
-    Dist::Requires tells you which versions of which packages a distribution
-    requires. The distribution can be in an archive file or unpacked into a
-    directory. By default, the requirements will only include packages that
-    are newer than the ones in the perl core (if they were in the core at
-    all). You can turn this feature off to get all requirements. You can
-    also control which version of perl to consider.
+    Dist::Requires answers the question "Which packages are required to
+    install a distribution with a particular version of perl?" The
+    distribution can be in an archive file or unpacked into a directory. By
+    default, the requirements will only include packages that are newer than
+    the ones in the perl core (if they were in the core at all). You can
+    turn this feature off to get all requirements. You can also control
+    which version of perl to consider.
 
 CONSTRUCTOR
   new( %attributes )
