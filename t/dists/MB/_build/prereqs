@@ -1,0 +1,12 @@
+do{ my $x = {
+       'build_requires' => {
+                             'Bar' => '1.004_01',
+                             'Foo' => '1.0.3'
+                           },
+       'conflicts' => {},
+       'requires' => {
+                       'Baz' => 0
+                     },
+       'recommends' => {}
+     };
+$x; }
