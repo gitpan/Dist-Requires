@@ -45,6 +45,7 @@
             "Module::Build" : "0.21",
             "Module::CoreList" : 0,
             "Moose" : 0,
+            "Moose::Util::TypeConstraints" : 0,
             "Path::Class" : 0,
             "Pod::Usage" : 0,
             "namespace::autoclean" : 0,
@@ -68,7 +69,7 @@
    "provides" : {
       "Dist::Requires" : {
          "file" : "lib/Dist/Requires.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       }
    },
    "release_status" : "stable",
@@ -82,6 +83,6 @@
          "web" : "https://github.com/thaljef/Dist-Requires"
       }
    },
-   "version" : "0.002"
+   "version" : "0.003"
 }
 

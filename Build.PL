@@ -23,7 +23,7 @@ my %module_build_args = (
     "Jeffrey Ryan Thalhammer <jeff\@imaginative-software.com>"
   ],
   "dist_name" => "Dist-Requires",
-  "dist_version" => "0.002",
+  "dist_version" => "0.003",
   "license" => "perl",
   "module_name" => "Dist::Requires",
   "recommends" => {},
@@ -40,6 +40,7 @@ my %module_build_args = (
     "Module::Build" => "0.21",
     "Module::CoreList" => 0,
     "Moose" => 0,
+    "Moose::Util::TypeConstraints" => 0,
     "Path::Class" => 0,
     "Pod::Usage" => 0,
     "namespace::autoclean" => 0,

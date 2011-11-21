@@ -2,7 +2,7 @@ NAME
     Dist::Requires - Identify requirements for a distribution
 
 VERSION
-    version 0.002
+    version 0.003
 
 SYNOPSIS
       use Dist::Requires;
@@ -31,7 +31,7 @@ CONSTRUCTOR
 
 ATTRIBUTES
   target_perl => $PATH
-    Sets the perl executable that will be used to configure the
+    The path to the perl executable that will be used to configure the
     distribution. Defaults to the perl that loaded this module. NOTE: this
     attribute is not configurable at this time.
 
@@ -39,7 +39,8 @@ ATTRIBUTES
     The core module list for the specified perl version will be used to
     filter the requirements. This only matters if you're using the default
     package filter. Defaults to the version of the perl specified by the
-    "perl" attribute..
+    "perl" attribute. Can be specified as a decimal number, a dotted version
+    string, or a version object.
 
   timeout => $INT
     Sets the timeout (in seconds) for running the distribution's
