@@ -6,8 +6,8 @@ MANIFEST
 META.json
 META.yml
 README
-bin/dist-requires
 dist.ini
+examples/dist-requires
 lib/Dist/Requires.pm
 perlcritic.ini
 t/00-compile.t

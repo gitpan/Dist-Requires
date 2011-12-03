@@ -12,7 +12,7 @@ use Dist::Requires;
 
 #------------------------------------------------------------------------------
 
-our $VERSION = '0.003'; # VERSION
+# VERSION
 
 #------------------------------------------------------------------------------
 
@@ -25,27 +25,12 @@ pod2usage() if @ARGV;
 my %filter_attr = $opts{all} ? (filter => {}) : ();
 my %perl_attr = $opts{perl} ? (target_perl_version => $opts{perl}) : ();
 my $dr = Dist::Requires->new(%perl_attr, %filter_attr);
-my %requires = $dr->requires(dist => $dist);
-my $longest = ( sort {$b <=> $a} map {length} keys %requires )[0];
-printf "%-${longest}s => %s\n", $_, $requires{$_} for sort keys %requires;
+my %prereqs = $dr->prerequisites(dist => $dist);
+my $longest = ( sort {$b <=> $a} map {length} keys %prereqs )[0];
+printf "%-${longest}s => %s\n", $_, $prereqs{$_} for sort keys %prereqs;
 exit;
 
 #------------------------------------------------------------------------------
-
-
-
-__END__
-=pod
-
-=for :stopwords Jeffrey Ryan Thalhammer Imaginative Software Systems
-
-=head1 NAME
-
-dist-requires - Report packages required by a distribution
-
-=head1 VERSION
-
-version 0.003
 
 =head1 SYNOPSIS
 
@@ -88,17 +73,6 @@ C<-perl> option meaningless.
 =head2 -help
 
 Display usage information.
-
-=head1 AUTHOR
-
-Jeffrey Ryan Thalhammer <jeff@imaginative-software.com>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2011 by Imaginative Software Systems.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
 
 =cut
 

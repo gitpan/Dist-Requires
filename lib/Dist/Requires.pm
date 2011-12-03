@@ -25,7 +25,7 @@ use namespace::autoclean;
 
 #-----------------------------------------------------------------------------
 
-our $VERSION = '0.003'; # VERSION
+our $VERSION = '0.004'; # VERSION
 
 #-----------------------------------------------------------------------------
 # Some custom types
@@ -117,7 +117,7 @@ sub BUILD {
 #-----------------------------------------------------------------------------
 
 
-sub requires {
+sub prerequisites {
     my ( $self, %args ) = @_;
 
     my $dist          = $args{dist};
@@ -315,7 +315,7 @@ Dist::Requires - Identify requirements for a distribution
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 SYNOPSIS
 
@@ -323,10 +323,10 @@ version 0.003
   my $dr = Dist::Requires->new();
 
   # From a distribution archive file...
-  my $requires = $dr->requires(dist => 'Foo-Bar-1.2.tar.gz');
+  my $prereqs = $dr->prerequisites(dist => 'Foo-Bar-1.2.tar.gz');
 
   # From an unpacked distribution directory...
-  my $requires = $dr->requires(dist => 'Foo-Bar-1.2');
+  my $prereqs = $dr->prerequisites(dist => 'Foo-Bar-1.2');
 
 =head1 DESCRIPTION
 
@@ -379,7 +379,7 @@ to any empty hash.
 
 =head1 METHODS
 
-=head2 requires( dist => $SOME_PATH )
+=head2 prerequisites( dist => $SOME_PATH )
 
 Returns the requirements of the distribution as a hash of PACKAGE_NAME
 => VERSION pairs.  The c<dist> argument can be the path to either a

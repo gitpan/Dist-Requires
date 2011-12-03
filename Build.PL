@@ -13,7 +13,9 @@ my %module_build_args = (
     "FindBin" => 0,
     "Module::Build" => "0.3601",
     "Test::More" => 0,
-    "Test::Most" => 0
+    "Test::Most" => 0,
+    "strict" => 0,
+    "warnings" => 0
   },
   "configure_requires" => {
     "Module::Build" => "0.3601"
@@ -23,7 +25,7 @@ my %module_build_args = (
     "Jeffrey Ryan Thalhammer <jeff\@imaginative-software.com>"
   ],
   "dist_name" => "Dist-Requires",
-  "dist_version" => "0.003",
+  "dist_version" => "0.004",
   "license" => "perl",
   "module_name" => "Dist::Requires",
   "recommends" => {},
@@ -35,23 +37,17 @@ my %module_build_args = (
     "Cwd" => 0,
     "ExtUtils::MakeMaker" => "6.58",
     "File::Temp" => 0,
-    "Getopt::Long" => 0,
     "IPC::Run" => 0,
     "Module::Build" => "0.21",
     "Module::CoreList" => 0,
     "Moose" => 0,
     "Moose::Util::TypeConstraints" => 0,
     "Path::Class" => 0,
-    "Pod::Usage" => 0,
     "namespace::autoclean" => 0,
     "perl" => "5.006",
-    "strict" => 0,
-    "version" => 0,
-    "warnings" => 0
+    "version" => 0
   },
-  "script_files" => [
-    "bin/dist-requires"
-  ]
+  "script_files" => []
 );
 
 
