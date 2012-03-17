@@ -25,7 +25,7 @@ my %module_build_args = (
     "Jeffrey Ryan Thalhammer <jeff\@imaginative-software.com>"
   ],
   "dist_name" => "Dist-Requires",
-  "dist_version" => "0.004",
+  "dist_version" => "0.005",
   "license" => "perl",
   "module_name" => "Dist::Requires",
   "recommends" => {},

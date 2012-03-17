@@ -25,7 +25,7 @@ use namespace::autoclean;
 
 #-----------------------------------------------------------------------------
 
-our $VERSION = '0.004'; # VERSION
+our $VERSION = '0.005'; # VERSION
 
 #-----------------------------------------------------------------------------
 # Some custom types
@@ -125,6 +125,9 @@ sub prerequisites {
     my %dist_requires = $self->_get_dist_requires($dist_dir);
     my %my_requires   = $self->_filter_requires(%dist_requires);
 
+    # Cleanup after ourselves.  The parent is a tempdir
+    $dist_dir->parent->remove();
+
     return %my_requires;
 }
 
@@ -144,16 +147,17 @@ sub _resolve_dist {
 sub _unpack_dist {
     my ($self, $dist) = @_;
 
-    my $temp = dir( File::Temp::tempdir(CLEANUP => 1) );
+    my $tempdir = dir( File::Temp::tempdir() );
     my $ae = Archive::Extract->new( archive => $dist );
-    $ae->extract( to => $temp ) or croak $ae->error();
+    $ae->extract( to => $tempdir ) or croak $ae->error();
 
-    # Originally, we just returned the first entry in $ae->files() as the
-    # $dist_root, but that proved to be unreliable.  Better to actually look
-    # in $temp and see what is there.  For a well-packaged archive, $temp
-    # should contain exactly one child and that child should be a directory.
+    # Originally, we just returned the first entry in $ae->files() as
+    # the $dist_root, but that proved to be unreliable.  Better to
+    # actually look in $tempdir and see what is there.  For a well
+    # packaged archive, $tempdir should contain exactly one child and
+    # that child should be a directory.
 
-    my @children = $temp->children();
+    my @children = $tempdir->children();
     croak "$dist did not unpack into a single directory" if @children != 1;
 
     my $dist_root = $children[0];
@@ -307,7 +311,7 @@ __END__
 
 =for :stopwords Jeffrey Ryan Thalhammer Imaginative Software Systems cpan testmatrix url
 annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata
-placeholders
+placeholders metacpan
 
 =head1 NAME
 
@@ -315,7 +319,7 @@ Dist::Requires - Identify requirements for a distribution
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 SYNOPSIS
 
@@ -456,7 +460,7 @@ L<http://www.cpantesters.org/distro/D/Dist-Requires>
 
 CPAN Testers Matrix
 
-The CPAN Testers Matrix is a website that provides a visual way to determine what Perls/platforms PASSed for a distribution.
+The CPAN Testers Matrix is a website that provides a visual overview of the test results for a distribution on various Perls/platforms.
 
 L<http://matrix.cpantesters.org/?dist=Dist-Requires>
 

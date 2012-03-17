@@ -4,7 +4,7 @@
       "Jeffrey Ryan Thalhammer <jeff@imaginative-software.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300003, CPAN::Meta::Converter version 2.112150",
+   "generated_by" : "Dist::Zilla version 4.300009, CPAN::Meta::Converter version 2.113640",
    "license" : [
       "perl_5"
    ],
@@ -34,40 +34,40 @@
       },
       "runtime" : {
          "requires" : {
-            "Archive::Extract" : "0",
-            "CPAN::Meta" : "0",
-            "Carp" : "0",
-            "Cwd" : "0",
+            "Archive::Extract" : 0,
+            "CPAN::Meta" : 0,
+            "Carp" : 0,
+            "Cwd" : 0,
             "ExtUtils::MakeMaker" : "6.58",
-            "File::Temp" : "0",
-            "IPC::Run" : "0",
+            "File::Temp" : 0,
+            "IPC::Run" : 0,
             "Module::Build" : "0.21",
-            "Module::CoreList" : "0",
-            "Moose" : "0",
-            "Moose::Util::TypeConstraints" : "0",
-            "Path::Class" : "0",
-            "namespace::autoclean" : "0",
+            "Module::CoreList" : 0,
+            "Moose" : 0,
+            "Moose::Util::TypeConstraints" : 0,
+            "Path::Class" : 0,
+            "namespace::autoclean" : 0,
             "perl" : "5.006",
-            "version" : "0"
+            "version" : 0
          }
       },
       "test" : {
          "requires" : {
-            "File::Basename" : "0",
-            "File::Find" : "0",
-            "File::Spec" : "0",
-            "FindBin" : "0",
-            "Test::More" : "0",
-            "Test::Most" : "0",
-            "strict" : "0",
-            "warnings" : "0"
+            "File::Basename" : 0,
+            "File::Find" : 0,
+            "File::Spec" : 0,
+            "FindBin" : 0,
+            "Test::More" : 0,
+            "Test::Most" : 0,
+            "strict" : 0,
+            "warnings" : 0
          }
       }
    },
    "provides" : {
       "Dist::Requires" : {
          "file" : "lib/Dist/Requires.pm",
-         "version" : "0.004"
+         "version" : "0.005"
       }
    },
    "release_status" : "stable",
@@ -81,6 +81,6 @@
          "web" : "https://github.com/thaljef/Dist-Requires"
       }
    },
-   "version" : "0.004"
+   "version" : "0.005"
 }
 
