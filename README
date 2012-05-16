@@ -2,7 +2,7 @@ NAME
     Dist::Requires - Identify requirements for a distribution
 
 VERSION
-    version 0.005
+    version 0.006
 
 SYNOPSIS
       use Dist::Requires;

@@ -25,7 +25,7 @@ use namespace::autoclean;
 
 #-----------------------------------------------------------------------------
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 #-----------------------------------------------------------------------------
 # Some custom types
@@ -61,7 +61,7 @@ has target_perl_version => (
 has timeout => (
     is      => 'ro',
     isa     => 'Int',
-    default => 15,
+    default => 30,
 );
 
 #-----------------------------------------------------------------------------
@@ -319,7 +319,7 @@ Dist::Requires - Identify requirements for a distribution
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
