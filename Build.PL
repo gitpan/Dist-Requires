@@ -10,7 +10,9 @@ my %module_build_args = (
     "File::Basename" => 0,
     "File::Find" => 0,
     "File::Spec" => 0,
+    "File::Spec::Functions" => 0,
     "FindBin" => 0,
+    "List::Util" => 0,
     "Module::Build" => "0.3601",
     "Test::More" => 0,
     "Test::Most" => 0,
@@ -25,7 +27,7 @@ my %module_build_args = (
     "Jeffrey Ryan Thalhammer <jeff\@imaginative-software.com>"
   ],
   "dist_name" => "Dist-Requires",
-  "dist_version" => "0.006",
+  "dist_version" => "0.007",
   "license" => "perl",
   "module_name" => "Dist::Requires",
   "recommends" => {},

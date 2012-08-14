@@ -4,7 +4,7 @@
       "Jeffrey Ryan Thalhammer <jeff@imaginative-software.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300010, CPAN::Meta::Converter version 2.120630",
+   "generated_by" : "Dist::Zilla version 4.300020, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -56,7 +56,9 @@
             "File::Basename" : "0",
             "File::Find" : "0",
             "File::Spec" : "0",
+            "File::Spec::Functions" : "0",
             "FindBin" : "0",
+            "List::Util" : "0",
             "Test::More" : "0",
             "Test::Most" : "0",
             "strict" : "0",
@@ -67,7 +69,7 @@
    "provides" : {
       "Dist::Requires" : {
          "file" : "lib/Dist/Requires.pm",
-         "version" : "0.006"
+         "version" : "0.007"
       }
    },
    "release_status" : "stable",
@@ -81,6 +83,6 @@
          "web" : "https://github.com/thaljef/Dist-Requires"
       }
    },
-   "version" : "0.006"
+   "version" : "0.007"
 }
 

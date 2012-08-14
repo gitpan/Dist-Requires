@@ -11,6 +11,7 @@ examples/dist-requires
 lib/Dist/Requires.pm
 perlcritic.ini
 t/00-compile.t
+t/00-report-prereqs.t
 t/01-functional.t
 t/dists/EUMM/MANIFEST
 t/dists/EUMM/MYMETA.json
