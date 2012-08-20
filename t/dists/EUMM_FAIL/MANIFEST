@@ -1,4 +1,2 @@
-Build.PL
+Makefile.PL
 MANIFEST			This list of files
-META.yml
-META.json

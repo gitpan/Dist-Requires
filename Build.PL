@@ -7,9 +7,7 @@ use Module::Build 0.3601;
 
 my %module_build_args = (
   "build_requires" => {
-    "File::Basename" => 0,
     "File::Find" => 0,
-    "File::Spec" => 0,
     "File::Spec::Functions" => 0,
     "FindBin" => 0,
     "List::Util" => 0,
@@ -22,12 +20,12 @@ my %module_build_args = (
   "configure_requires" => {
     "Module::Build" => "0.3601"
   },
-  "dist_abstract" => "Identify requirements for a distribution",
+  "dist_abstract" => "Identify prerequisites for a distribution",
   "dist_author" => [
     "Jeffrey Ryan Thalhammer <jeff\@imaginative-software.com>"
   ],
   "dist_name" => "Dist-Requires",
-  "dist_version" => "0.007",
+  "dist_version" => "0.008",
   "license" => "perl",
   "module_name" => "Dist::Requires",
   "recommends" => {},
@@ -36,14 +34,14 @@ my %module_build_args = (
     "Archive::Extract" => 0,
     "CPAN::Meta" => 0,
     "Carp" => 0,
-    "Cwd" => 0,
+    "Cwd::Guard" => 0,
     "ExtUtils::MakeMaker" => "6.58",
     "File::Temp" => 0,
     "IPC::Run" => 0,
     "Module::Build" => "0.21",
     "Module::CoreList" => 0,
     "Moose" => 0,
-    "Moose::Util::TypeConstraints" => 0,
+    "MooseX::Types::Perl" => 0,
     "Path::Class" => 0,
     "namespace::autoclean" => 0,
     "perl" => "5.006",

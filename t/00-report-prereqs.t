@@ -20,11 +20,9 @@ my @modules = qw(
   Archive::Extract
   CPAN::Meta
   Carp
-  Cwd
+  Cwd::Guard
   ExtUtils::MakeMaker
-  File::Basename
   File::Find
-  File::Spec
   File::Spec::Functions
   File::Temp
   FindBin
@@ -33,7 +31,7 @@ my @modules = qw(
   Module::Build
   Module::CoreList
   Moose
-  Moose::Util::TypeConstraints
+  MooseX::Types::Perl
   Path::Class
   Test::More
   Test::Most

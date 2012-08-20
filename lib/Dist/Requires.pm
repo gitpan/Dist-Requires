@@ -1,9 +1,9 @@
+# ABSTRACT: Identify prerequisites for a distribution
+
 package Dist::Requires;
 
-# ABSTRACT: Identify requirements for a distribution
-
 use Moose;
-use Moose::Util::TypeConstraints;
+use MooseX::Types::Perl qw(VersionObject);
 
 use Carp;
 use CPAN::Meta;
@@ -12,7 +12,7 @@ use Archive::Extract;
 use IPC::Run qw(run timeout);
 use Path::Class qw(dir file);
 use File::Temp;
-use Cwd;
+use Cwd::Guard;
 
 # We don't use these directly, but they will be required to perform
 # configuration of our dists.  We want versions that will at least
@@ -25,15 +25,7 @@ use namespace::autoclean;
 
 #-----------------------------------------------------------------------------
 
-our $VERSION = '0.007'; # VERSION
-
-#-----------------------------------------------------------------------------
-# Some custom types
-
-class_type 'Version', { class => 'version' };
-coerce 'Version', from 'Str', via { version->parse($_) };
-coerce 'Version', from 'Num', via { version->parse($_) };
-# TODO: Put those on CPAN as MooseX::Types::Version
+our $VERSION = '0.008'; # VERSION
 
 #-----------------------------------------------------------------------------
 
@@ -48,11 +40,10 @@ has target_perl => (
 
 has target_perl_version => (
     is         => 'ro',
-    isa        => 'Version',
+    isa        => VersionObject,
+    default    => sub { version->parse( $] ) },
     coerce     => 1,
     lazy       => 1,
-    default    => sub { version->parse( $] ) },
-    # TODO: lazy_build => 1,
 );
 
 #-----------------------------------------------------------------------------
@@ -70,7 +61,8 @@ has timeout => (
 has filter => (
     is         => 'ro',
     isa        => 'HashRef',
-    lazy_build => 1,
+    builder    => '_build_filter',
+    lazy       => 1,
 );
 
 #-----------------------------------------------------------------------------
@@ -182,28 +174,41 @@ sub _get_dist_requires {
 sub _configure {
     my ( $self, $dist_dir ) = @_;
 
-    my $old_cwd = getcwd();
-    # Cwd::chdir() also sets $ENV{PWD}, which may be used by some dists!
-    Cwd::chdir($dist_dir) or croak "Unable to chdir to $dist_dir: $!";
-
     my $try_eumm = sub {
         if ( -e 'Makefile.PL' ) {
-            return $self->_run( [$self->target_perl(), 'Makefile.PL'] ) && -e 'Makefile';
+            my ($status, $output) = $self->_run_cmd( [$self->target_perl(), 'Makefile.PL'] );
+            # warn "Makefile.PL configuration is dubious: $output" if not $status;
+            return -e 'Makefile';
         }
     };
 
 
     my $try_mb = sub {
         if ( -e 'Build.PL' ) {
-            return $self->_run( [$self->target_perl(), 'Build.PL'] ) && -e 'Build';
+            my ($status, $output) = $self->_run_cmd( [$self->target_perl(), 'Build.PL'] );
+            # warn "Build.PL configuration is dubious: $output" if not $status;
+            return -e 'Build' && -f _;
         }
     };
 
-    my $ok = $try_mb->() || $try_eumm->() || croak "Failed to configure $dist_dir";
 
-    Cwd::chdir($old_cwd) or croak "Unable to chdir to $old_cwd: $!";
+    # trick AutoInstall
+    local $ENV{PERL5_CPAN_IS_RUNNING} = local $ENV{PERL5_CPANPLUS_IS_RUNNING} = $$;
 
-    return $ok;
+    # e.g. skip CPAN configuration on local::lib
+    local $ENV{PERL5_CPANM_IS_RUNNING} = $$;
+
+    # use defaults for any intereactive prompts
+    local $ENV{PERL_MM_USE_DEFAULT} = 1;
+
+    # skip man page generation
+    local $ENV{PERL_MM_OPT} = $ENV{PERL_MM_OPT};
+    $ENV{PERL_MM_OPT} .= " INSTALLMAN1DIR=none INSTALLMAN3DIR=none";
+
+
+    local $ENV{PWD} = $dist_dir->stringify;
+    my $guard = Cwd::Guard->new($dist_dir) or croak "chdir failed: $Cwd::Guard::Error";
+    return $try_mb->() || $try_eumm->() || croak "Failed to configure $dist_dir";
 }
 
 #-----------------------------------------------------------------------------
@@ -215,6 +220,7 @@ sub _find_dist_meta {
         my $meta_file_path = file($dist_dir, $meta_file);
         next if not -e $meta_file_path;
         my $meta = eval { CPAN::Meta->load_file($meta_file_path) } || undef;
+        #warn "META file $meta_file_path is dubious: $@" if $@;
         return $meta if $meta;
     }
 
@@ -257,27 +263,13 @@ sub _filter_requires {
 
 #-----------------------------------------------------------------------------
 
-sub _run {
+sub _run_cmd {
     my ( $self, $cmd ) = @_;
-
-    # trick AutoInstall
-    local $ENV{PERL5_CPAN_IS_RUNNING} = local $ENV{PERL5_CPANPLUS_IS_RUNNING} = $$;
-
-    # e.g. skip CPAN configuration on local::lib
-    local $ENV{PERL5_CPANM_IS_RUNNING} = $$;
-
-    # use defaults for any intereactive prompts
-    local $ENV{PERL_MM_USE_DEFAULT} = 1;
-
-    # skip man page generation
-    local $ENV{PERL_MM_OPT} = $ENV{PERL_MM_OPT};
-    $ENV{PERL_MM_OPT} .= " INSTALLMAN1DIR=none INSTALLMAN3DIR=none";
 
     my ($in, $out);
     my $ok = run( $cmd, \$in, \$out, \$out, timeout( $self->timeout() ) );
-    $ok or croak "Configuration failed: $out";
 
-    return $ok;
+    return ($ok, $out);
 }
 
 #-----------------------------------------------------------------------------
@@ -296,7 +288,7 @@ sub __versionize_values {
 
 #-----------------------------------------------------------------------------
 
-__PACKAGE__->meta->make_immutable();
+__PACKAGE__->meta->make_immutable;
 
 #-----------------------------------------------------------------------------
 
@@ -312,32 +304,42 @@ placeholders metacpan
 
 =head1 NAME
 
-Dist::Requires - Identify requirements for a distribution
+Dist::Requires - Identify prerequisites for a distribution
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 
   use Dist::Requires;
   my $dr = Dist::Requires->new();
 
-  # From a distribution archive file...
-  my $prereqs = $dr->prerequisites(dist => 'Foo-Bar-1.2.tar.gz');
+  # From a packed distribution archive file...
+  my %prereqs = $dr->prerequisites(dist => 'Foo-Bar-1.2.tar.gz');
 
   # From an unpacked distribution directory...
-  my $prereqs = $dr->prerequisites(dist => 'Foo-Bar-1.2');
+  my %prereqs = $dr->prerequisites(dist => 'Foo-Bar-1.2');
 
 =head1 DESCRIPTION
 
-L<Dist::Requires> answers the question "Which packages are required to
-install a distribution with a particular version of perl?"  The
-distribution can be in an archive file or unpacked into a directory.
-By default, the requirements will only include packages that are newer
-than the ones in the perl core (if they were in the core at all).  You
-can turn this feature off to get all requirements.  You can also
-control which version of perl to consider.
+L<Dist::Requires> reports the packages (and their versions) that are
+required to configure, test, build, and install a distribution.  The
+distribution may be either a packed distribution archive or an
+unpacked distribution directory.  By default, the results will exclude
+requirements that are satisfied by the perl core.
+
+L<Dist::Requires> is intended for discovering requirements in the same
+manner and context that L<cpan> and L<cpanm> do it.  It is
+specifically designed to support L<Pinto>, so I don't expect this
+module to be useful to you unless you are doing something that deals
+directly with the CPAN toolchain.
+
+L<Dist::Requires> does B<not> recurse into dependencies, it does
+B<not> scan source files for packages that you C<use> or C<require>,
+it does B<not> search for distribution metadata on CPAN, and it does
+B<not> generate pretty graphs.  If you need those things, please
+L</SEE ALSO>.
 
 =head1 CONSTRUCTOR
 
@@ -355,7 +357,7 @@ The path to the perl executable that will be used to configure the
 distribution.  Defaults to the perl that loaded this module.  NOTE:
 this attribute is not configurable at this time.
 
-=head2 target_perl_version => $FLOAT
+=head2 target_perl_version => $VERSION
 
 The core module list for the specified perl version will be used to
 filter the requirements.  This only matters if you're using the
@@ -363,10 +365,10 @@ default package filter.  Defaults to the version of the perl specified
 by the C<perl> attribute.  Can be specified as a decimal number, a
 dotted version string, or a L<version> object.
 
-=head2 timeout => $INT
+=head2 timeout => $INTEGER
 
 Sets the timeout (in seconds) for running the distribution's
-configuration step.  Defaults to 15 seconds.
+configuration step.  Defaults to 30 seconds.
 
 =head2 filter => $HASHREF
 
@@ -383,36 +385,39 @@ to any empty hash.
 =head2 prerequisites( dist => $SOME_PATH )
 
 Returns the requirements of the distribution as a hash of PACKAGE_NAME
-=> VERSION pairs.  The c<dist> argument can be the path to either a
+=> VERSION pairs.  The C<dist> argument can be the path to either a
 distribution archive file (e.g. F<Foo-Bar-1.2.tar.gz>) or an unpacked
 distribution directory (e.g. F<Foo-Bar-1.2>).  The requirements will
 be filtered according to the values specified by the C<filter>
 attribute.
 
-=head1 LIMITATIONS
-
-Much of L<Dist::Requires> was inspired (even copied) from L<CPAN> and
-L<cpanm>.  However, both of those are much more robust and better at
-handling old versions of toolchain modules, broken metadata, etc.
-L<Dist::Requires> requires relatively new toolchain modules, and will
-probably only work if given a well-packaged distribution with sane
-metadata.  Perhaps L<Dist::Metadata> will become more robust in the
-future.
+=for Pod::Coverage BUILD
 
 =head1 BEWARE
 
 L<Dist::Requires> will attempt to configure the distribution using
-whatever build mechanism it provides (i.e. L<Module::Build> or
-L<ExtUtils::MakeMaker>) and then extract the requirements from the
-resulting metadata files.  That means you could be executing unsafe
-code.  However, this is no different from what L<cpanm> and L<cpan> do
-when you install a distribution.
+whatever build mechanism it provides (e.g. L<Module::Build> or
+L<ExtUtils::MakeMaker> or L<Module::Install>) and then extract the
+requirements from the resulting metadata files.  That means you could
+be executing unsafe code.  However, this is no different from what
+L<cpanm> and L<cpan> do when you install a distribution.
 
 =head1 SEE ALSO
 
+Neil Bowers has written an excellent comparison of various modules for
+finding dependencies L<here|http://neilb.org/reviews/dependencies.html>.
+
+L<CPAN::Dependency>
+
+L<CPAN::FindDependencies>
+
+L<Devel::Dependencies>
+
 L<Module::Depends>
 
-=for Pod::Coverage BUILD
+L<Module::Depends::Tree>
+
+L<Perl::PrereqScanner>
 
 =head1 SUPPORT
 
